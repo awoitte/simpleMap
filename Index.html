@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Simple Map</title>
+    
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="js/knockout-3.0.0.js"></script>
+    <script src="js/koBindings.js"></script>
+    <link rel="stylesheet" href="css/styles.css" />
+    
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <script src="js/fontAwesomeIcons.js"></script>
+    
+    <link href="css/colorpicker.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="css/page.css" rel="stylesheet" type="text/css" media="all" />
+    <script src="js/colorpicker.min.js"></script>
+    
+    <script src="js/Map.js"></script>
+    <script src="js/NodeList.js"></script>
+    <script src="js/Node.js"></script>
+    <script src="js/Point.js"></script>
+    <script src="js/CanvasAPI.js"></script>
+    <script src="js/UI.js"></script>
+    
+</head>
+
+<body>
+
+<script type="text/html" id="node-template">
+    <div class="node" data-bind="style: {left: cssX, top: cssY, fontSize: getSize() + 8 + 'px'}, draggable: true, css: {rootNode: isRoot()}, selectable: true">
+        <div class="text" data-bind="css: {leafText : isLeaf(), rootText: isRoot(), higherText: isHigher, leftText: isLeft, selectedText: selected}">
+            <span data-bind="text: text"></span>
+            <span class="icon" data-bind="visible: hasIcon, css: icon"></span>
+            <input class="editText" data-bind="value: text" />
+            <button class="newButton" data-bind="click: generateNew">+</button>
+        </div>
+        
+        <!-- ko with: children -->
+            <div class="nodeContainer" data-bind="template: { name: 'node-template', foreach: nodes }"></div>
+        <!-- /ko -->
+    </div>
+</script>
+
+<script type="text/html" id="icon-catagory-template">
+    <div class="iconSectionHeader" data-bind="text:name"></div>
+    <div class="iconSection" data-bind="template: { name: 'icon-template', foreach: icons }"></div>
+</script>
+
+<script type="text/html" id="icon-template">
+    <span class="displayIcon">
+        <div data-bind="css: $data"></div>
+    </span>
+</script>
+
+<div class="colorSelecter">
+    <div id="colorselector2"><div style="background-color: #000"></div></div>
+    <input id="inherit" type="checkbox" name="inherit">
+    <label for="inherit">Inherit</label>
+</div>
+    
+<div class="iconList">
+    <div class="iconListHeader">Icons</div>
+    <div class="iconListContent">
+        <div class="iconGroup" data-bind="template: { name: 'icon-catagory-template', foreach: icons }"></div>
+        <button class="clearIcon">Clear</button>
+    </div>
+</div>
+    
+<canvas id="canvas">
+    Your browser does not support the HTML5 Canvas Tag
+</canvas>
+
+<div data-bind="template: { name: 'node-template', data: root }"></div>
+
+
+    
+    
+<script>
+    function startSimpleMap(){
+        var theCanvas = document.getElementById('canvas');
+  	if (!theCanvas || !theCanvas.getContext) {
+    		return;
+  	}
+  
+  	var context = theCanvas.getContext('2d');
+ 	
+	if (!context) {
+   	 	return;
+  	}
+        
+        var simpleMap = new Map(context);
+        
+        //build nodes with knockout
+        //draw links with canvas
+        ko.applyBindings(simpleMap);
+        
+        
+    }
+    $(function(){
+        startSimpleMap();
+    });
+</script>
+
+</body>
+</html>
